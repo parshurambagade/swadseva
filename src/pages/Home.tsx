@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SearchIcon,
 } from "lucide-react";
 import RestaurantCard from "../components/RestaurantCard";
+import axios from "axios";
+import { SWIGGY_API_URL } from "../constants";
 
 const imageUrl =
   "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/RX_THUMBNAIL/IMAGES/VENDOR/2024/6/4/3c2c022a-d0ea-4f0a-aec5-52546292aa0a_5624.JPG";
@@ -57,7 +59,12 @@ const restaurants = [
   },
 ];
 
+
+
 export default function HomePage() {
+
+  const [restaurants, setRestaurants] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -69,17 +76,30 @@ export default function HomePage() {
     setSortBy(event.target.value);
   };
 
-  const sortedRestaurants = [...restaurants].sort((a, b) => {
-    if (sortBy === "rating") return b.rating - a.rating;
+  const sortedRestaurants = restaurants.sort((a, b) => {
+    if (sortBy === "rating") return b?.info?.avgRating - a?.info?.avgRating;
     if (sortBy === "deliveryTime")
-      return parseInt(a.deliveryTime) - parseInt(b.deliveryTime);
+      return parseInt(a?.sla?.deliveryTime) - parseInt(b?.sla?.deliveryTime);
     return 0;
   });
 
   const filteredRestaurants = sortedRestaurants.filter((restaurant) =>
-    restaurant.name.toLowerCase().includes(searchTerm.toLowerCase())
+    restaurant?.info?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, [])
+
+
+  const fetchRestaurants = async () => {
+    const response = await axios.get(SWIGGY_API_URL);
+    setRestaurants(response?.data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+  };
+
+  if(!restaurants) return;
+  
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
 
@@ -93,24 +113,14 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             Top Restaurants
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredRestaurants.map((restaurant) => (
-              <RestaurantCard restaurant={restaurant} key={restaurant.id} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-6">
+            {filteredRestaurants?.map((restaurant) => (
+              <RestaurantCard restaurant={restaurant} key={restaurant?.id} />
             ))}
           </div>
         </section>
 
-        {/* All Restaurants Section */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">
-            All Restaurants
-          </h2>
-          <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredRestaurants.map((restaurant) => (
-             <RestaurantCard restaurant={restaurant} key={restaurant.id} />
-            ))}
-          </div>
-        </section>
+    
       </main>
 
     </div>
