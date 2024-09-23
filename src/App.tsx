@@ -8,6 +8,7 @@ import Error from "./pages/Error";
 import CartPage from "./components/Cart";
 import Layout from "./components/layouts/Layout";
 import Orders from "./pages/Orders";
+import { ResContextProvider } from "./contexts/ResContext";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -16,7 +17,7 @@ const App = () => {
       element: <Layout><Home /></Layout>,
     },
     {
-      path: "/restaurant/:id",
+      path: "/restaurant/:resId",
       element: <Layout><Restaurant /></Layout>,
     },
     {
@@ -42,11 +43,11 @@ const App = () => {
   ]);
 
   return (
-    <div>
+    <ResContextProvider>
       {" "}
       
       <RouterProvider router={router} />
-    </div>
+    </ResContextProvider>
   );
 };
 

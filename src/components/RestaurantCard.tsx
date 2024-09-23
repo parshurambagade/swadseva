@@ -1,10 +1,11 @@
 import { ClockIcon, MapPinIcon, StarIcon } from "lucide-react";
-import { SWIGGY_IMAGES_URL } from "../constants";
+import { SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL } from "../constants";
+import { Link } from "react-router-dom";
 
 const RestaurantCard = ({restaurant}) => {
 
   return (
-    <div
+    <Link to={'/restaurant/' + restaurant?.info?.id}
       className="max-w-sm  sm:w-full  bg-white cursor-pointer rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
     >
       <img
@@ -13,9 +14,12 @@ const RestaurantCard = ({restaurant}) => {
         className="w-full h-56 object-fit"
       />
       <div className="p-4">
-        <h3 className="font-bold text-xl mb-2 text-gray-800">
+        <div className="mb-4">
+        <h3 className="font-bold text-xl mb-1  text-gray-800">
           {restaurant?.info?.name}
         </h3>
+        <p className="text-sm my-1 text-gray-600">{restaurant?.info?.cuisines?.join(", ")}</p>
+        </div>
         <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
           <div className="flex items-center">
             <ClockIcon className="h-5 w-5 mr-1 text-orange-500" />
@@ -31,7 +35,7 @@ const RestaurantCard = ({restaurant}) => {
           <span className="ml-1 font-semibold">{restaurant?.info?.avgRating}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
