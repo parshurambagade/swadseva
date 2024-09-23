@@ -1,60 +1,7 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { SearchIcon } from "lucide-react";
 import RestaurantCard from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";
-
-const imageUrl =
-  "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/RX_THUMBNAIL/IMAGES/VENDOR/2024/6/4/3c2c022a-d0ea-4f0a-aec5-52546292aa0a_5624.JPG";
-// const restaurants = [
-//   {
-//     id: 1,
-//     name: "Tasty Bites",
-//     rating: 4.5,
-//     image: imageUrl,
-//     deliveryTime: "25-35",
-//     distance: "1.8",
-//   },
-//   {
-//     id: 2,
-//     name: "Spice Haven",
-//     rating: 4.7,
-//     image: imageUrl,
-//     deliveryTime: "30-40",
-//     distance: "2.2",
-//   },
-//   {
-//     id: 3,
-//     name: "Green Leaf Cafe",
-//     rating: 4.3,
-//     image: imageUrl,
-//     deliveryTime: "20-30",
-//     distance: "1.5",
-//   },
-//   {
-//     id: 4,
-//     name: "Burger Palace",
-//     rating: 4.6,
-//     image: imageUrl,
-//     deliveryTime: "25-35",
-//     distance: "2.0",
-//   },
-//   {
-//     id: 5,
-//     name: "Sushi Express",
-//     rating: 4.8,
-//     image: imageUrl,
-//     deliveryTime: "35-45",
-//     distance: "2.7",
-//   },
-//   {
-//     id: 6,
-//     name: "Pizza Paradise",
-//     rating: 4.4,
-//     image: imageUrl,
-//     deliveryTime: "30-40",
-//     distance: "2.3",
-//   },
-// ];
 
 export default function HomePage() {
   const { setSortBy, filteredResList, setSearchTerm } = useContext(ResContext)!;
@@ -83,7 +30,7 @@ export default function HomePage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredResList?.map((restaurant) => (
-              <RestaurantCard restaurant={restaurant} key={restaurant?.id} />
+              <RestaurantCard restaurant={restaurant} key={restaurant?.info?.id} />
             ))}
           </div>
         </section>

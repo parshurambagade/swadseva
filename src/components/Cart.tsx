@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MinusIcon, PlusIcon, Trash2Icon, ShoppingCartIcon } from 'lucide-react';
 
 interface CartItem {

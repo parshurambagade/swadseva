@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SearchIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 interface Order {

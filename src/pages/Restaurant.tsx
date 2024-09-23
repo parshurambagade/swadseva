@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StarIcon,
   MapPinIcon,
@@ -11,106 +11,15 @@ import {
 import axios from "axios";
 import { SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL } from "../constants";
 import { useParams } from "react-router-dom";
+import { FoodMenu, Info, ItemCard } from "../types";
 
-interface MenuItem {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  isVeg: boolean;
-  image: string;
-}
 
-interface MenuCategory {
-  category: string;
-  items: MenuItem[];
-}
-
-const resImg =
-  "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/zsws4cdkzx90k3mlwozb";
-
-const itemImg =
-  "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_300,h_300,c_fit/ialkjssjppu71wicdnlf";
-
-const restaurantData = {
-  name: "Gourmet Delight",
-  image: resImg,
-  rating: 4.5,
-  queasiness: "Fast",
-  address: "123 Foodie Street, Culinary City",
-  distance: "2.5 km",
-  menu: [
-    {
-      category: "Appetizers",
-      items: [
-        {
-          id: 1,
-          name: "Bruschetta",
-          description: "Toasted bread with fresh tomatoes and basil",
-          price: 8.99,
-          isVeg: true,
-          image: itemImg,
-        },
-        {
-          id: 2,
-          name: "Chicken Wings",
-          description: "Crispy wings with spicy sauce",
-          price: 10.99,
-          isVeg: false,
-          image: itemImg,
-        },
-      ],
-    },
-    {
-      category: "Main Course",
-      items: [
-        {
-          id: 3,
-          name: "Margherita Pizza",
-          description: "Classic pizza with tomato and mozzarella",
-          price: 14.99,
-          isVeg: true,
-          image: itemImg,
-        },
-        {
-          id: 4,
-          name: "Grilled Salmon",
-          description: "Fresh salmon with lemon butter sauce",
-          price: 18.99,
-          isVeg: false,
-          image: itemImg,
-        },
-      ],
-    },
-    {
-      category: "Desserts",
-      items: [
-        {
-          id: 5,
-          name: "Tiramisu",
-          description: "Italian coffee-flavored dessert",
-          price: 7.99,
-          isVeg: true,
-          image: itemImg,
-        },
-        {
-          id: 6,
-          name: "Chocolate Lava Cake",
-          description: "Warm chocolate cake with a gooey center",
-          price: 8.99,
-          isVeg: true,
-          image: itemImg,
-        },
-      ],
-    },
-  ] as MenuCategory[],
-};
 
 export default function RestaurantPage() {
   const [cart, setCart] = useState<{ [key: number]: number }>({});
   const [openCategories, setOpenCategories] = useState<string[]>([]);
-  const [resInfo, setResInfo] = useState({} as any);
-  const [menuItems, setMenuItems] = useState([] as any);
+  const [resInfo, setResInfo] = useState<Info>({} as Info);
+  const [menuItems, setMenuItems] = useState<FoodMenu[]>([]);
 
   const { resId } = useParams();
 
@@ -126,13 +35,13 @@ export default function RestaurantPage() {
     const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId);
     setMenuItems(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
-        (res) =>
+        (res: FoodMenu) =>
           res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
       )
     );
     console.log(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
-        (res) =>
+        (res: FoodMenu) =>
           res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
       )
     );
@@ -145,6 +54,7 @@ export default function RestaurantPage() {
       const newQuantity = (prevCart[itemId] || 0) + change;
       if (newQuantity <= 0) {
         const { [itemId]: _, ...rest } = prevCart;
+        console.log(_);
         return rest;
       }
       return { ...prevCart, [itemId]: newQuantity };
@@ -163,9 +73,7 @@ export default function RestaurantPage() {
 
   const {
     name,
-    city,
     avgRating,
-    costForTwoMessage,
     cuisines,
     locality,
     sla,
@@ -190,7 +98,7 @@ export default function RestaurantPage() {
               </div>
               <div className="flex items-center">
                 <ClockIcon className="w-5 h-5 text-gray-500 mr-1" />
-                <span>{cuisines?.join(", ")}</span>
+                <span>{sla?.slaString}</span>
               </div>
               <div className="flex items-center">
                 <MapPinIcon className="w-5 h-5 text-gray-500 mr-1" />
@@ -208,7 +116,7 @@ export default function RestaurantPage() {
       {/* Menu Section */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Menu</h3>
-        {menuItems?.map((category, index) => (
+        {menuItems?.map((category: FoodMenu, index) => (
           <div key={index} className="mb-4">
             <button
               className="w-full text-left p-4 bg-gray-100 rounded-lg flex justify-between items-center"
@@ -225,7 +133,7 @@ export default function RestaurantPage() {
             </button>
             {openCategories.includes(category?.card?.card?.title) && (
               <div className="mt-4 space-y-4">
-                {category?.card?.card?.itemCards?.map((item) => (
+                {category?.card?.card?.itemCards?.map((item: ItemCard) => (
                   <div
                     key={item?.card?.info?.id}
                     className="border rounded-lg p-4 flex flex-col sm:flex-row items-center sm:items-start"
@@ -268,19 +176,19 @@ export default function RestaurantPage() {
                             <button
                               className="p-2  rounded-full hover:bg-gray-200 transition-colors duration-200"
                               onClick={() =>
-                                updateCart(item?.card?.info?.id, -1)
+                                updateCart(Number(item?.card?.info?.id), -1)
                               }
-                              disabled={!cart[item?.card?.info?.id]}
+                              disabled={!cart[Number(item?.card?.info?.id)]}
                             >
                               <MinusIcon className="h-4 w-4 text-gray-600" />
                             </button>
                             <span className="mx-2 w-8 text-center">
-                              {cart[item?.card?.info?.id] || 0}
+                              {cart[Number(item?.card?.info?.id)] || 0}
                             </span>
                             <button
                               className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
                               onClick={() =>
-                                updateCart(item?.card?.info?.id, 1)
+                                updateCart(Number(item?.card?.info?.id), 1)
                               }
                             >
                               <PlusIcon className="h-4 w-4 text-gray-600" />
@@ -288,7 +196,7 @@ export default function RestaurantPage() {
                           </div>
                           <button
                             className="px-3 py-1 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-200"
-                            onClick={() => updateCart(item?.card?.info?.id, 1)}
+                            onClick={() => updateCart(Number(item?.card?.info?.id), 1)}
                           >
                             Add to Cart
                           </button>

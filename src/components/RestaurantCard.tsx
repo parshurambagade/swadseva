@@ -1,8 +1,9 @@
 import { ClockIcon, MapPinIcon, StarIcon } from "lucide-react";
-import { SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL } from "../constants";
+import { SWIGGY_IMAGES_URL } from "../constants";
 import { Link } from "react-router-dom";
+import { RestaurantCardType } from "../types";
 
-const RestaurantCard = ({restaurant}) => {
+const RestaurantCard = ({restaurant}:{restaurant:RestaurantCardType}) => {
 
   return (
     <Link to={'/restaurant/' + restaurant?.info?.id}

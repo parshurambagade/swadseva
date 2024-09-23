@@ -1,22 +1,23 @@
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { SWIGGY_API_URL } from "../constants";
+import { RestaurantCardType } from "../types";
 
-interface RestaurantType {
-  id: string;
-  name: string;
-  rating: number;
-  image: string;
-  deliveryTime: string;
-  distance: string;
-}
+// interface RestaurantType {
+//   id: string;
+//   name: string;
+//   rating: number;
+//   image: string;
+//   deliveryTime: string;
+//   distance: string;
+// }
 interface ResContextType {
-  resList: RestaurantType[];
-  setResList: React.Dispatch<React.SetStateAction<RestaurantType[]>>;
-  filteredResList: RestaurantType[];
-  setFilteredResList: React.Dispatch<React.SetStateAction<RestaurantType[]>>;
-  sortedResList: RestaurantType[];
-  setSortedResList: React.Dispatch<React.SetStateAction<RestaurantType[]>>;
+  resList: RestaurantCardType[];
+  setResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
+  filteredResList: RestaurantCardType[];
+  setFilteredResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
+  sortedResList: RestaurantCardType[];
+  setSortedResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;  
   sortBy: string;
@@ -26,9 +27,9 @@ interface ResContextType {
 const ResContext = createContext<ResContextType | null>(null);
 
 const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [resList, setResList] = useState<RestaurantType[]>([]);
-  const [filteredResList, setFilteredResList] = useState<RestaurantType[]>([]);
-  const [sortedResList, setSortedResList] = useState<RestaurantType[]>([]);
+  const [resList, setResList] = useState<RestaurantCardType[]>([]);
+  const [filteredResList, setFilteredResList] = useState<RestaurantCardType[]>([]);
+  const [sortedResList, setSortedResList] = useState<RestaurantCardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -40,12 +41,12 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
     console.log(resList);
 
     if (resList) {
-      const sortedData = resList.sort((a, b) => {
+      const sortedData = resList.sort((a: RestaurantCardType, b: RestaurantCardType) => {
         if (sortBy === "rating") return b?.info?.avgRating - a?.info?.avgRating;
         if (sortBy === "deliveryTime")
           return (
-            parseInt(a?.info?.sla?.deliveryTime) -
-            parseInt(b?.info?.sla?.deliveryTime)
+            parseInt(a?.info?.sla?.lastMileTravelString) -
+            parseInt(b?.info?.sla?.lastMileTravelString)
           );
         return 0;
       });
@@ -56,7 +57,7 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (sortedResList) {
-      const filteredData = sortedResList.filter((restaurant) =>
+      const filteredData = sortedResList.filter((restaurant: RestaurantCardType ) =>
         restaurant?.info?.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredResList(filteredData);
