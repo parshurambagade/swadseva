@@ -74,7 +74,6 @@ export default function RestaurantPage() {
   const {
     name,
     avgRating,
-    cuisines,
     locality,
     sla,
     cloudinaryImageId,
