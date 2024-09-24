@@ -9,7 +9,7 @@ import {
   ChevronUpIcon,
 } from "lucide-react";
 import axios from "axios";
-import { SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL } from "../constants";
+import { SWIGGY_IMAGES_URL} from "../constants";
 import { useParams } from "react-router-dom";
 import { FoodMenu, Info, ItemCard } from "../types";
 import CartContext from "../contexts/CartContext";
