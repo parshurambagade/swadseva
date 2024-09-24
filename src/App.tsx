@@ -9,6 +9,7 @@ import CartPage from "./components/Cart";
 import Layout from "./components/layouts/Layout";
 import Orders from "./pages/Orders";
 import { ResContextProvider } from "./contexts/ResContext";
+import { CartContextProvider } from "./contexts/CartContext";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -44,9 +45,9 @@ const App = () => {
 
   return (
     <ResContextProvider>
-      {" "}
-      
+      <CartContextProvider>
       <RouterProvider router={router} />
+      </CartContextProvider>
     </ResContextProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   StarIcon,
   MapPinIcon,
@@ -12,14 +12,15 @@ import axios from "axios";
 import { SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL } from "../constants";
 import { useParams } from "react-router-dom";
 import { FoodMenu, Info, ItemCard } from "../types";
-
-
+import CartContext from "../contexts/CartContext";
 
 export default function RestaurantPage() {
-  const [cart, setCart] = useState<{ [key: number]: number }>({});
   const [openCategories, setOpenCategories] = useState<string[]>([]);
   const [resInfo, setResInfo] = useState<Info>({} as Info);
   const [menuItems, setMenuItems] = useState<FoodMenu[]>([]);
+
+  const { cartItems, addItem, removeItem} =
+    useContext(CartContext)!;
 
   const { resId } = useParams();
 
@@ -32,7 +33,13 @@ export default function RestaurantPage() {
   }, [resInfo]);
 
   const fetchResInfo = async () => {
-    const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId);
+    const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+      }
+    });
     setMenuItems(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
         (res: FoodMenu) =>
@@ -49,18 +56,6 @@ export default function RestaurantPage() {
     setResInfo(data?.data?.cards[2]?.card?.card?.info);
   };
 
-  const updateCart = (itemId: number, change: number) => {
-    setCart((prevCart) => {
-      const newQuantity = (prevCart[itemId] || 0) + change;
-      if (newQuantity <= 0) {
-        const { [itemId]: _, ...rest } = prevCart;
-        console.log(_);
-        return rest;
-      }
-      return { ...prevCart, [itemId]: newQuantity };
-    });
-  };
-
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) =>
       prev.includes(category)
@@ -71,13 +66,7 @@ export default function RestaurantPage() {
 
   if (!resInfo) return null;
 
-  const {
-    name,
-    avgRating,
-    locality,
-    sla,
-    cloudinaryImageId,
-  } = resInfo;
+  const { name, avgRating, locality, sla, cloudinaryImageId } = resInfo;
   return (
     <div className="container mx-auto min-h-[calc(100vh-64px)] max-w-4xl px-4 py-8">
       {/* Restaurant Info Section */}
@@ -168,26 +157,28 @@ export default function RestaurantPage() {
                       </div>
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2">
                         <span className="font-bold text-orange-500 mb-2 sm:mb-0">
-                          ₹{item?.card?.info?.price / 100}
+                          ₹{item?.card?.info?.price/100 || Number(item?.card?.info?.defaultPrice)/100}
                         </span>
                         <div className="flex sm:flex-col gap-4 justify-center items-center space-x-2">
                           <div className="flex items-center bg-gray-100 rounded-full">
                             <button
                               className="p-2  rounded-full hover:bg-gray-200 transition-colors duration-200"
                               onClick={() =>
-                                updateCart(Number(item?.card?.info?.id), -1)
+                                removeItem(Number(item?.card?.info?.id))
                               }
-                              disabled={!cart[Number(item?.card?.info?.id)]}
+                              disabled={
+                                !cartItems[Number(item?.card?.info?.id)]
+                              }
                             >
                               <MinusIcon className="h-4 w-4 text-gray-600" />
                             </button>
                             <span className="mx-2 w-8 text-center">
-                              {cart[Number(item?.card?.info?.id)] || 0}
+                              {cartItems.find(i => Number(i.id) === Number(item?.card?.info?.id))?.quantity || 0}
                             </span>
                             <button
                               className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
                               onClick={() =>
-                                updateCart(Number(item?.card?.info?.id), 1)
+                                addItem({id: Number(item?.card?.info?.id), quantity: 1, price: item?.card?.info?.price/100 || Number(item?.card?.info?.defaultPrice)/100, name: item?.card?.info?.name, image: item?.card?.info?.imageId, restaurant: resInfo.name})
                               }
                             >
                               <PlusIcon className="h-4 w-4 text-gray-600" />
@@ -195,7 +186,9 @@ export default function RestaurantPage() {
                           </div>
                           <button
                             className="px-3 py-1 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-200"
-                            onClick={() => updateCart(Number(item?.card?.info?.id), 1)}
+                            onClick={() =>
+                              addItem({id: Number(item?.card?.info?.id), quantity: 1, price: item?.card?.info?.price/100 || Number(item?.card?.info?.defaultPrice) / 100, name: item?.card?.info?.name, image: item?.card?.info?.imageId, restaurant: resInfo.name})
+                            }
                           >
                             Add to Cart
                           </button>

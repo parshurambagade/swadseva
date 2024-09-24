@@ -27,6 +27,7 @@ export interface DishInfo {
   imageId: string;
   inStock: number;
   isVeg: number;
+  defaultPrice?: number;
   price: number;
   variants: Record<string, unknown>;
   variantsV2: Record<string, unknown>;
