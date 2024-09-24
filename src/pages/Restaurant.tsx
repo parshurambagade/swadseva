@@ -33,13 +33,7 @@ export default function RestaurantPage() {
   }, [resInfo]);
 
   const fetchResInfo = async () => {
-    const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
-      }
-    });
+    const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId);
     setMenuItems(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
         (res: FoodMenu) =>
