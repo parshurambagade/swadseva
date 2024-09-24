@@ -62,7 +62,7 @@ export default function RestaurantPage() {
       setResInfo({} as Info);
       setMenuItems([]);
     };
-  }, [resId]);
+  }, [resId, setResInfo, setMenuItems]);
 
   useEffect(() => {
     if (resInfo) console.log(resInfo);
