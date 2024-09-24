@@ -34,7 +34,9 @@ export default function RestaurantPage() {
 
   const fetchResInfo = async () => {
     try{
-    const { data } = await axios.get("https://api.allorigins.win/get?url=" + encodeURIComponent(SWIGGY_RESTAURANT_URL + resId));
+    const { data } = await axios.get(
+      `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=18.5204303&lng=73.8567437&restaurantId=13909')}`
+    );
 
     setMenuItems(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
