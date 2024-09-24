@@ -9,7 +9,7 @@ import {
   ChevronUpIcon,
 } from "lucide-react";
 import axios from "axios";
-import { SWIGGY_IMAGES_URL} from "../constants";
+import { CORS_PROXY_ORIGIN, SWIGGY_IMAGES_URL, SWIGGY_RESTAURANT_URL} from "../constants";
 import { useParams } from "react-router-dom";
 import { FoodMenu, Info, ItemCard } from "../types";
 import CartContext from "../contexts/CartContext";
@@ -34,24 +34,20 @@ export default function RestaurantPage() {
 
   const fetchResInfo = async () => {
     try{
-    const { data } = await axios.get(
-      `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=18.5204303&lng=73.8567437&restaurantId=13909')}`
+    const response = await axios.get(
+      `${CORS_PROXY_ORIGIN}${encodeURIComponent(`${SWIGGY_RESTAURANT_URL}${resId}`)}`
     );
+
+    const {data} = await JSON.parse(response.data.contents);
 
     setMenuItems(
-      data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
-        (res: FoodMenu) =>
-          res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
-      )
-    );
-    console.log(
-      data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+      data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
         (res: FoodMenu) =>
           res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
       )
     );
 
-    setResInfo(data?.data?.cards[2]?.card?.card?.info);
+    setResInfo(data?.cards[2]?.card?.card?.info);
   }catch(err){
       console.error(err);
     }
