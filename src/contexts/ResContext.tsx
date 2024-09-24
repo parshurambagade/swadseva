@@ -38,7 +38,6 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    console.log(resList);
 
     if (resList) {
       const sortedData = resList.sort((a: RestaurantCardType, b: RestaurantCardType) => {
@@ -65,11 +64,14 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [searchTerm, sortBy, sortedResList]);
 
   const fetchRestaurants = async () => {
+    try{
     const response = await axios.get(SWIGGY_API_URL);
     setResList(
       response?.data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
         ?.restaurants
-    );
+    );}catch(err){
+      console.error(err);
+    }
   };
 
   return (

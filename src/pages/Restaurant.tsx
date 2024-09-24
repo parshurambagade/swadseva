@@ -33,7 +33,9 @@ export default function RestaurantPage() {
   }, [resInfo]);
 
   const fetchResInfo = async () => {
-    const { data } = await axios.get(SWIGGY_RESTAURANT_URL + resId);
+    try{
+    const { data } = await axios.get("https://api.allorigins.win/get?url=" + encodeURIComponent(SWIGGY_RESTAURANT_URL + resId));
+
     setMenuItems(
       data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
         (res: FoodMenu) =>
@@ -48,6 +50,9 @@ export default function RestaurantPage() {
     );
 
     setResInfo(data?.data?.cards[2]?.card?.card?.info);
+  }catch(err){
+      console.error(err);
+    }
   };
 
   const toggleCategory = (category: string) => {
