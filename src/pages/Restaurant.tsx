@@ -27,38 +27,48 @@ export default function RestaurantPage() {
 
   const { resId } = useParams();
 
+  
+
   useEffect(() => {
+
+    const fetchResInfo = async () => {
+      try {
+        const response = await axios.get(
+          `${CORS_PROXY_ORIGIN}${encodeURIComponent(
+            `${SWIGGY_RESTAURANT_URL}${resId}`
+          )}`
+        );
+  
+        const { data } = await JSON.parse(response.data.contents);
+  
+        console.log(response);
+  
+        setResInfo(data?.cards[2]?.card?.card?.info);
+  
+        setMenuItems(
+          data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+            (res: FoodMenu) =>
+              res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
+          )
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     if (resId) fetchResInfo();
-  }, []);
+
+    return () => {
+      setResInfo({} as Info);
+      setMenuItems([]);
+    };
+  }, [resId]);
 
   useEffect(() => {
     if (resInfo) console.log(resInfo);
   }, [resInfo]);
 
-  const fetchResInfo = async () => {
-    try {
-      const response = await axios.get(
-        `${CORS_PROXY_ORIGIN}${encodeURIComponent(
-          `${SWIGGY_RESTAURANT_URL}${resId}`
-        )}`
-      );
 
-      const { data } = await JSON.parse(response.data.contents);
-
-      console.log(response);
-
-      setResInfo(data?.cards[2]?.card?.card?.info);
-
-      setMenuItems(
-        data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
-          (res: FoodMenu) =>
-            res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
-        )
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) =>
@@ -76,11 +86,11 @@ export default function RestaurantPage() {
       {/* Restaurant Info Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center mb-4">
-          <img
+          {cloudinaryImageId && <img
             src={SWIGGY_IMAGES_URL + cloudinaryImageId}
             alt={name}
             className="w-full md:w-1/3 h-48 object-cover rounded-lg mb-4 md:mb-0 md:mr-6"
-          />
+          />}
           <div>
             <h2 className="text-3xl font-bold mb-2 text-gray-800">{name}</h2>
             <div className="flex flex-wrap gap-4 text-sm">
