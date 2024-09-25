@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { SearchIcon } from "lucide-react";
 import RestaurantCard from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";
+import RestaurantCardShimmer from "../components/ShimmerUI/RestaurantCardShimmer";
 
 export default function HomePage() {
-  const { setSortBy, filteredResList, setSearchTerm } = useContext(ResContext)!;
+  const { setSortBy, filteredResList, setSearchTerm, isLoading } =
+    useContext(ResContext)!;
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -14,7 +16,7 @@ export default function HomePage() {
     setSortBy(event.target.value);
   };
 
-  if (!filteredResList) return;
+  // if (!filteredResList) return;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -28,11 +30,26 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             Top Restaurants
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredResList?.map((restaurant) => (
-              <RestaurantCard restaurant={restaurant} key={restaurant?.info?.id} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-between">
+              <RestaurantCardShimmer />
+              <RestaurantCardShimmer />
+              <RestaurantCardShimmer />
+              <RestaurantCardShimmer /> <RestaurantCardShimmer />
+              <RestaurantCardShimmer />
+              <RestaurantCardShimmer />
+              <RestaurantCardShimmer />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredResList?.map((restaurant) => (
+                <RestaurantCard
+                  restaurant={restaurant}
+                  key={restaurant?.info?.id}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

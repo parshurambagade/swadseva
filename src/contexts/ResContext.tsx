@@ -22,6 +22,7 @@ interface ResContextType {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;  
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
 }
 
 const ResContext = createContext<ResContextType | null>(null);
@@ -32,6 +33,7 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [sortedResList, setSortedResList] = useState<RestaurantCardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchRestaurants();
@@ -67,10 +69,12 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
     try{
     const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`);
     setResList(
-      await JSON.parse(response?.data?.contents)?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+     await JSON.parse(response?.data?.contents)?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
         ?.restaurants
     );}catch(err){
       console.error(err);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -87,6 +91,7 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         setSearchTerm,
         sortBy,
         setSortBy,
+        isLoading
       }}
     >
       {children}
