@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { SWIGGY_API_URL } from "../constants";
+import { CORS_PROXY_ORIGIN, SWIGGY_API_URL } from "../constants";
 import { RestaurantCardType } from "../types";
 
 // interface RestaurantType {
@@ -65,9 +65,9 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchRestaurants = async () => {
     try{
-    const response = await axios.get(SWIGGY_API_URL);
+    const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`);
     setResList(
-      response?.data?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+      await JSON.parse(response?.data?.contents)?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
         ?.restaurants
     );}catch(err){
       console.error(err);

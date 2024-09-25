@@ -41,7 +41,7 @@ export default function RestaurantPage() {
   
         const { data } = await JSON.parse(response.data.contents);
   
-        console.log(response);
+        // console.log(response);
   
         setResInfo(data?.cards[2]?.card?.card?.info);
   
