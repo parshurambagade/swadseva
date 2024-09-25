@@ -1,13 +1,7 @@
 import { createContext, useState } from "react";
+import { CartItem } from "../types";
 
-interface CartItem {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  quantity: number;
-  restaurant: string;
-}
+
 interface CartContextType {
   cartItems: CartItem[];
   setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;

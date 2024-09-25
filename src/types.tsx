@@ -241,3 +241,21 @@ export interface Slugs {
     };
   }
   
+  export interface CartItem {
+    id: number;
+    name: string;
+    image: string;
+    price: number;
+    quantity: number;
+    restaurant: string;
+  }
+
+export interface MenuContainerType {
+  menuItems: FoodMenu[];
+  toggleCategory: (category: string) => void;
+  openCategories: string[];
+  removeItem: (id: number) => void;
+  cartItems: CartItem[];
+  addItem: (item: CartItem) => void;
+  resInfo: Info;
+}
