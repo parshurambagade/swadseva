@@ -8,12 +8,15 @@ import RestaurantInfoCard from "../components/RestaurantInfoCard";
 import MenuContainer from "../components/MenuContainer";
 import RestaurantInfoCardShimmer from "../components/ShimmerUI/RestaurantInfoCardShimmer";
 import MenuContainerShimmer from "../components/ShimmerUI/MenuContainerShimmer";
+import Toast from "../components/Toast";
 
 export default function RestaurantPage() {
   const [openCategories, setOpenCategories] = useState<string[]>([]);
   const [resInfo, setResInfo] = useState<Info>({} as Info);
   const [menuItems, setMenuItems] = useState<FoodMenu[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [Error, setError] = useState<string>("");
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   const { cartItems, addItem, removeItem } = useContext(CartContext)!;
 
@@ -22,13 +25,15 @@ export default function RestaurantPage() {
   useEffect(() => {
     const fetchResInfo = async () => {
       try {
+        setIsLoading(true);
+        setShowToast(true);
         const response = await axios.get(
           `${CORS_PROXY_ORIGIN}${encodeURIComponent(
             `${SWIGGY_RESTAURANT_URL}${resId}`
           )}`
         );
 
-        const { data } = await JSON.parse(response.data.contents);
+        const { data } = JSON.parse(response.data.contents);
 
         // console.log(response);
 
@@ -42,6 +47,7 @@ export default function RestaurantPage() {
         );
       } catch (err) {
         console.error(err);
+        setError("Error While Fetching Data. Please Try Again Later");
       }finally{
         setIsLoading(false);
       }
@@ -55,9 +61,6 @@ export default function RestaurantPage() {
     };
   }, [resId, setResInfo, setMenuItems]);
 
-  useEffect(() => {
-    if (resInfo) console.log(resInfo);
-  }, [resInfo]);
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) =>
@@ -69,8 +72,8 @@ export default function RestaurantPage() {
 
   return (
     <div className="container mx-auto min-h-[calc(100vh-64px)] max-w-4xl px-4 py-8">
-      {/* Restaurant Info Section */}
-      {isLoading ? <RestaurantInfoCardShimmer /> : 
+      {/* Error Message */}
+      {Error ? <p className="text-red-500">{Error}</p> : isLoading ? <RestaurantInfoCardShimmer /> : 
       <RestaurantInfoCard resInfo={resInfo} />}
 
       {/* Menu Section */}
@@ -85,6 +88,10 @@ export default function RestaurantPage() {
           addItem={addItem}
           resInfo={resInfo}
         />
+      )}
+
+{showToast && (
+      <Toast message="Data is being fetched. This may take a moment due to our CORS proxy." onClose={() => setShowToast(false)} />
       )}
     </div>
   );

@@ -1,19 +1,5 @@
 import { createContext, useState } from "react";
-import { CartItem } from "../types";
-
-
-interface CartContextType {
-  cartItems: CartItem[];
-  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
-  totalItems: number;
-  setTotalItems: React.Dispatch<React.SetStateAction<number>>;
-  totalAmount: number;
-  setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
-  addItem: (item: CartItem) => void;
-  removeItem: (id: number) => void;
-  clearItem: (id: number) => void;
-  clearCart: () => void;
-}
+import { CartContextType, CartItem } from "../types";
 
 const CartContext = createContext<CartContextType | null>({
   cartItems: [],
@@ -26,6 +12,7 @@ const CartContext = createContext<CartContextType | null>({
   removeItem: () => {},
   clearItem: () => {},
   clearCart: () => {},
+  addingItem: false,
 });
 
 export const CartContextProvider = ({
@@ -37,48 +24,63 @@ export const CartContextProvider = ({
   const [totalItems, setTotalItems] = useState<number>(0);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
+
   const addItem = (item: CartItem) => {
     console.log("Adding item to the cart!");
-    const existingItem = cartItems.find(i => i.id === item.id);
+
+    const existingItem = cartItems.find((i) => i.id === item.id);
     if (existingItem) {
       setCartItems(
-        cartItems.map(i =>
-          i.id === item.id
-            ? { ...i, quantity: i.quantity + item.quantity }
-            : i
+        cartItems.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
         )
       );
+      setTotalItems(totalItems + item.quantity);
+      setTotalAmount((prev) => prev + existingItem.price);
     } else {
       setCartItems([...cartItems, item]);
+      setTotalItems(totalItems + item.quantity);
+      setTotalAmount((prev) => prev + item.price);
     }
-    setTotalItems(totalItems + item.quantity);
-    setTotalAmount(totalAmount + item.price * item.quantity);
+
+    
   };
 
   const removeItem = (id: number) => {
-    console.log("Removing item to the cart!");
-    const existingItem = cartItems.find(i => i.id === id);
-    if (existingItem && existingItem.quantity > 1) {
-      setCartItems(cartItems.map(i => i.id === id ? {...i, quantity: i.quantity - 1} : i));
-      setTotalItems(totalItems - 1);
-      setTotalAmount(totalAmount - existingItem.price);
+    console.log("Removing item from the cart!");
+    const existingItem = cartItems.find((i) => i.id == id);
+    if (existingItem) {
+      if (existingItem.quantity > 1) {
+        setCartItems(
+          cartItems.map((i) =>
+            i.id === id ? { ...i, quantity: i.quantity - 1 } : i
+          )
+        );
+        setTotalItems(totalItems - 1);
+        setTotalAmount((prev) => prev - existingItem.price);
+      } else {
+        // If quantity is 1, remove the item completely
+        setCartItems(cartItems.filter((i) => i.id !== id));
+        setTotalItems(totalItems - 1);
+        setTotalAmount((prev) => prev - existingItem.price);
+      }
     }
   };
 
   const clearItem = (id: number) => {
-    const existingItem = cartItems.find(i => i.id === id);
+    const existingItem = cartItems.find((i) => i.id === id);
     if (existingItem) {
-      setCartItems(cartItems.filter(i => i.id !== id));
-    setTotalItems(totalItems - existingItem.quantity);
-    setTotalAmount(totalAmount - existingItem.price * existingItem.quantity);
+      setCartItems(cartItems.filter((i) => i.id !== id));
+      setTotalItems(totalItems - existingItem.quantity);
+      setTotalAmount(totalAmount - existingItem.price * existingItem.quantity);
     }
-  }
+  };
 
   const clearCart = () => {
     setCartItems([]);
     setTotalItems(0);
     setTotalAmount(0);
-  }
+  };
 
   return (
     <CartContext.Provider

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SearchIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import Toast from '../components/Toast';
 
 interface Order {
   id: number;
@@ -23,6 +24,17 @@ export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<"date" | "price">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [showToast, setShowToast] = useState<boolean>(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowToast(true);
+    }, 1000);
+
+    return () => {
+      setShowToast(false);
+    };
+  },[])
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
@@ -112,6 +124,10 @@ export default function OrdersPage() {
           </div>
         ))}
       </div>
+
+      {showToast && (
+      <Toast message="This feature is currently under development. Displayed data is for demonstration purposes only." onClose={() => setShowToast(false)} />
+      )}
     </div>
   );
 }

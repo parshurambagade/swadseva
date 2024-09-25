@@ -83,6 +83,7 @@ export interface Slugs {
     longDistance: string;
     lastMileTravelString: string;
     iconType: string;
+    deliveryTime?: number;
     slaString?: string;
   }
   
@@ -259,3 +260,16 @@ export interface MenuContainerType {
   addItem: (item: CartItem) => void;
   resInfo: Info;
 }
+
+export interface CartContextType {
+  cartItems: CartItem[];
+  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  totalItems: number;
+  setTotalItems: React.Dispatch<React.SetStateAction<number>>;
+  totalAmount: number;
+  setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
+  addItem: (item: CartItem) => void;
+  removeItem: (id: number) => void;
+  clearItem: (id: number) => void;
+  clearCart: () => void;
+} 

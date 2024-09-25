@@ -1,11 +1,12 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { SearchIcon } from "lucide-react";
 import RestaurantCard from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";
 import RestaurantCardShimmer from "../components/ShimmerUI/RestaurantCardShimmer";
+import Toast from "../components/Toast";
 
 export default function HomePage() {
-  const { setSortBy, filteredResList, setSearchTerm, isLoading } =
+  const { setSortBy, filteredResList, setSearchTerm, isLoading, Error, showToast, setShowToast } =
     useContext(ResContext)!;
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,29 +26,38 @@ export default function HomePage() {
         {/* Search and Sort Section */}
         <HomeHeader handleSearch={handleSearch} handleSort={handleSort} />
 
-        {/* Top Restaurants Section */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">
-            Top Restaurants
-          </h2>
-          {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-between">
-              {[1,2,3,4,5,6,7,8].map((i: number) => (
-                <RestaurantCardShimmer key={i} />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredResList?.map((restaurant) => (
-                <RestaurantCard
-                  restaurant={restaurant}
-                  key={restaurant?.info?.id}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        {/* Error Message */}
+        {Error ? (
+          <p className="text-red-500">{Error}</p>
+        ) : (
+          <section className="mb-12">
+            {/* Top Restaurants Section */}
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">
+              Top Restaurants
+            </h2>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-between">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i: number) => (
+                  <RestaurantCardShimmer key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredResList?.map((restaurant) => (
+                  <RestaurantCard
+                    restaurant={restaurant}
+                    key={restaurant?.info?.id}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </main>
+
+      {showToast && (
+      <Toast message="Data is being fetched. This may take a moment due to our CORS proxy." onClose={() => setShowToast(false)} />
+      )}
     </div>
   );
 }

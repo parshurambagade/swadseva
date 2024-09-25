@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { CORS_PROXY_ORIGIN, SWIGGY_API_URL } from "../constants";
 import { RestaurantCardType } from "../types";
+import Toast from "../components/Toast";
 
 // interface RestaurantType {
 //   id: string;
@@ -23,6 +24,8 @@ interface ResContextType {
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
+  Error: string;  
+  showToast: boolean;
 }
 
 const ResContext = createContext<ResContextType | null>(null);
@@ -34,6 +37,9 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [Error, setError] = useState<string>("");
+  const [showToast, setShowToast] = useState(false);
+  
 
   useEffect(() => {
     fetchRestaurants();
@@ -46,8 +52,8 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         if (sortBy === "rating") return b?.info?.avgRating - a?.info?.avgRating;
         if (sortBy === "deliveryTime")
           return (
-            parseInt(a?.info?.sla?.lastMileTravelString) -
-            parseInt(b?.info?.sla?.lastMileTravelString)
+            Number(a?.info?.sla?.deliveryTime) -
+            Number(b?.info?.sla?.deliveryTime)
           );
         return 0;
       });
@@ -66,14 +72,18 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [searchTerm, sortBy, sortedResList]);
 
   const fetchRestaurants = async () => {
-    try{
-    const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`);
-    setResList(
-     await JSON.parse(response?.data?.contents)?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-        ?.restaurants
-    );}catch(err){
+    try {
+      setIsLoading(true);
+      setShowToast(true);
+      const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`);
+      const parsedData = JSON.parse(response?.data?.contents);
+      const restaurants = parsedData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+      setResList(restaurants);
+      // console.log(restaurants);
+    } catch (err) {
       console.error(err);
-    }finally{
+      setError("Error While Fetching Data. Please Try Again Later");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -91,10 +101,14 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         setSearchTerm,
         sortBy,
         setSortBy,
-        isLoading
+        isLoading,
+        Error,
+        showToast,
+        setShowToast
       }}
     >
       {children}
+     
     </ResContext.Provider>
   );
 };

@@ -28,7 +28,7 @@ const Header: React.FC = () => {
             </Link>
             <Link
               to="/cart"
-              className="hover:text-orange-200 transition-colors duration-200"
+              className={` hover:text-orange-200 transition-colors duration-200`}
             >
               Cart
             </Link>
@@ -89,7 +89,6 @@ const Header: React.FC = () => {
               Orders
             </Link>
             {/* <hr /> */}
-            
           </div>
         )}
       </div>
