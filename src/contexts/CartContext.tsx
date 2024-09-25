@@ -12,7 +12,6 @@ const CartContext = createContext<CartContextType | null>({
   removeItem: () => {},
   clearItem: () => {},
   clearCart: () => {},
-  addingItem: false,
 });
 
 export const CartContextProvider = ({

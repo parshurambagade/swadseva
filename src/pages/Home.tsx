@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext} from "react";
 import { SearchIcon } from "lucide-react";
 import RestaurantCard from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";

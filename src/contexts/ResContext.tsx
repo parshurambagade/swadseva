@@ -1,62 +1,40 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { CORS_PROXY_ORIGIN, SWIGGY_API_URL } from "../constants";
-import { RestaurantCardType } from "../types";
-import Toast from "../components/Toast";
-
-// interface RestaurantType {
-//   id: string;
-//   name: string;
-//   rating: number;
-//   image: string;
-//   deliveryTime: string;
-//   distance: string;
-// }
-interface ResContextType {
-  resList: RestaurantCardType[];
-  setResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
-  filteredResList: RestaurantCardType[];
-  setFilteredResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
-  sortedResList: RestaurantCardType[];
-  setSortedResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
-  searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;  
-  sortBy: string;
-  setSortBy: React.Dispatch<React.SetStateAction<string>>;
-  isLoading: boolean;
-  Error: string;  
-  showToast: boolean;
-}
+import { ResContextType, RestaurantCardType } from "../types";
 
 const ResContext = createContext<ResContextType | null>(null);
 
 const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [resList, setResList] = useState<RestaurantCardType[]>([]);
-  const [filteredResList, setFilteredResList] = useState<RestaurantCardType[]>([]);
+  const [filteredResList, setFilteredResList] = useState<RestaurantCardType[]>(
+    []
+  );
   const [sortedResList, setSortedResList] = useState<RestaurantCardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [Error, setError] = useState<string>("");
   const [showToast, setShowToast] = useState(false);
-  
 
   useEffect(() => {
     fetchRestaurants();
   }, []);
 
   useEffect(() => {
-
     if (resList) {
-      const sortedData = resList.sort((a: RestaurantCardType, b: RestaurantCardType) => {
-        if (sortBy === "rating") return b?.info?.avgRating - a?.info?.avgRating;
-        if (sortBy === "deliveryTime")
-          return (
-            Number(a?.info?.sla?.deliveryTime) -
-            Number(b?.info?.sla?.deliveryTime)
-          );
-        return 0;
-      });
+      const sortedData = resList.sort(
+        (a: RestaurantCardType, b: RestaurantCardType) => {
+          if (sortBy === "rating")
+            return b?.info?.avgRating - a?.info?.avgRating;
+          if (sortBy === "deliveryTime")
+            return (
+              Number(a?.info?.sla?.deliveryTime) -
+              Number(b?.info?.sla?.deliveryTime)
+            );
+          return 0;
+        }
+      );
 
       setSortedResList(sortedData);
     }
@@ -64,8 +42,11 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (sortedResList) {
-      const filteredData = sortedResList.filter((restaurant: RestaurantCardType ) =>
-        restaurant?.info?.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const filteredData = sortedResList.filter(
+        (restaurant: RestaurantCardType) =>
+          restaurant?.info?.name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
       setFilteredResList(filteredData);
     }
@@ -75,9 +56,13 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       setShowToast(true);
-      const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`);
+      const response = await axios.get(
+        `${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL)}`
+      );
       const parsedData = JSON.parse(response?.data?.contents);
-      const restaurants = parsedData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+      const restaurants =
+        parsedData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants;
       setResList(restaurants);
       // console.log(restaurants);
     } catch (err) {
@@ -104,13 +89,12 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         isLoading,
         Error,
         showToast,
-        setShowToast
+        setShowToast,
       }}
     >
       {children}
-     
     </ResContext.Provider>
   );
 };
-export { ResContextProvider};
+export { ResContextProvider };
 export default ResContext;

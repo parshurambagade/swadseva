@@ -273,3 +273,20 @@ export interface CartContextType {
   clearItem: (id: number) => void;
   clearCart: () => void;
 } 
+
+export interface ResContextType {
+  resList: RestaurantCardType[];
+  setResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
+  filteredResList: RestaurantCardType[];
+  setFilteredResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
+  sortedResList: RestaurantCardType[];
+  setSortedResList: React.Dispatch<React.SetStateAction<RestaurantCardType[]>>;
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;  
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
+  Error: string;  
+  showToast: boolean;
+  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
+}
