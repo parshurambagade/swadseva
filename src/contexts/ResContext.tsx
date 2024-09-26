@@ -64,7 +64,7 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         parsedData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
           ?.restaurants;
       setResList(restaurants);
-      // console.log(restaurants);
+      console.log(restaurants);
     } catch (err) {
       console.error(err);
       setError("Error While Fetching Data. Please Try Again Later");

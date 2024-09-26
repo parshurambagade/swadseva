@@ -210,6 +210,7 @@ export interface Slugs {
     totalRatings: number;
     aggregatedDiscountInfoV2: AggregatedDiscountInfo;
     type: string;
+    veg?: boolean;
     headerBanner: {
       url: string;
     };
@@ -289,4 +290,18 @@ export interface ResContextType {
   Error: string;  
   showToast: boolean;
   setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface OrderItem {
+  id: number;
+  itemName: string;
+  restaurantName: string;
+  price: number;
+  quantity: number;
+  total: number;
+  orderDate: string;
+}
+export interface OrdersContextType {
+  orders: OrderItem[];
+  setOrders: React.Dispatch<React.SetStateAction<OrderItem[]>>;
 }

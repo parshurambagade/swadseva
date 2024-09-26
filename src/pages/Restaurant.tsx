@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { CORS_PROXY_ORIGIN, SWIGGY_RESTAURANT_URL } from "../constants";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FoodMenu, Info } from "../types";
 import CartContext from "../contexts/CartContext";
 import RestaurantInfoCard from "../components/RestaurantInfoCard";
 import MenuContainer from "../components/MenuContainer";
 import RestaurantInfoCardShimmer from "../components/ShimmerUI/RestaurantInfoCardShimmer";
 import MenuContainerShimmer from "../components/ShimmerUI/MenuContainerShimmer";
-import Toast from "../components/Toast";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function RestaurantPage() {
   const [openCategories, setOpenCategories] = useState<string[]>([]);
@@ -16,17 +16,31 @@ export default function RestaurantPage() {
   const [menuItems, setMenuItems] = useState<FoodMenu[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [Error, setError] = useState<string>("");
-  const [showToast, setShowToast] = useState<boolean>(false);
 
-  const { cartItems, addItem, removeItem } = useContext(CartContext)!;
+  const { cartItems, addItem, removeItem, totalItems } = useContext(CartContext)!;
 
   const { resId } = useParams();
+
+  useEffect(() => {
+    toast.dismiss();
+   
+    if (isLoading) {
+      toast.loading(
+        "Data is being fetched. This may take a moment due to our CORS proxy."
+      );
+    } else if (Error) {
+      toast.error(Error);
+    } else {
+      toast.dismiss();
+    }
+  }, [isLoading, Error]);
 
   useEffect(() => {
     const fetchResInfo = async () => {
       try {
         setIsLoading(true);
-        setShowToast(true);
+        setError("");
+
         const response = await axios.get(
           `${CORS_PROXY_ORIGIN}${encodeURIComponent(
             `${SWIGGY_RESTAURANT_URL}${resId}`
@@ -48,19 +62,18 @@ export default function RestaurantPage() {
       } catch (err) {
         console.error(err);
         setError("Error While Fetching Data. Please Try Again Later");
-      }finally{
+      } finally {
         setIsLoading(false);
       }
     };
 
-    if (resId) fetchResInfo();
+    if (resId && !resInfo?.name) fetchResInfo();
 
-    return () => {
-      setResInfo({} as Info);
-      setMenuItems([]);
-    };
+    // return () => {
+    //   setResInfo({} as Info);
+    //   setMenuItems([]);
+    // };
   }, [resId, setResInfo, setMenuItems]);
-
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) =>
@@ -73,26 +86,41 @@ export default function RestaurantPage() {
   return (
     <div className="container mx-auto min-h-[calc(100vh-64px)] max-w-4xl px-4 py-8">
       {/* Error Message */}
-      {Error ? <p className="text-red-500">{Error}</p> : isLoading ? <RestaurantInfoCardShimmer /> : 
-      <RestaurantInfoCard resInfo={resInfo} />}
+      {Error ? (
+        <p className="text-red-500">{Error}</p>
+      ) : isLoading ? (
+        <RestaurantInfoCardShimmer />
+      ) : (
+        <RestaurantInfoCard resInfo={resInfo} />
+      )}
 
       {/* Menu Section */}
 
-      {isLoading ? <MenuContainerShimmer /> : menuItems && menuItems.length > 0 && (
-        <MenuContainer
-          menuItems={menuItems}
-          toggleCategory={toggleCategory}
-          openCategories={openCategories}
-          removeItem={removeItem}
-          cartItems={cartItems}
-          addItem={addItem}
-          resInfo={resInfo}
-        />
+      {isLoading ? (
+        <MenuContainerShimmer />
+      ) : (
+        menuItems &&
+        menuItems.length > 0 && (
+          <MenuContainer
+            menuItems={menuItems}
+            toggleCategory={toggleCategory}
+            openCategories={openCategories}
+            removeItem={removeItem}
+            cartItems={cartItems}
+            addItem={addItem}
+            resInfo={resInfo}
+          />
+        )
       )}
 
-{showToast && (
-      <Toast message="Data is being fetched. This may take a moment due to our CORS proxy." onClose={() => setShowToast(false)} />
-      )}
+      <div className={`cursor-pointer fixed bottom-10 sm:bottom-20 right-10 sm:right-20  rounded-full overflow-hidden flex items-center justify-center text-center shadow-xl bg-gray-200 p-3 z-50 text-gray-600 ${cartItems.length>0 ? " animate-bounce duration-300 transition-all " : ""}`}>
+        <p className={`text-[8px] absolute top-2 text-white right-3 bg-orange-600 rounded-full w-3 h-3  ${cartItems.length<=0 ? " hidden " : ""}`}>{totalItems}</p>
+        <Link to="/cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        </Link>
+      </div>
+
+      <Toaster />
     </div>
   );
 }

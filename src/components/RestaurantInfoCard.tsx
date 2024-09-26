@@ -19,7 +19,7 @@ const RestaurantInfoCard: React.FC<{ resInfo: Info }> = ({ resInfo }) => {
           <h2 className="text-3xl font-bold mb-2 text-gray-800">{name}</h2>
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center">
-              <StarIcon className="w-5 h-5 text-yellow-500 mr-1" />
+              <StarIcon className="w-5 h-5 text-orange-500 mr-1 fill-current"/>
               <span>{avgRating} Rating</span>
             </div>
             <div className="flex items-center">

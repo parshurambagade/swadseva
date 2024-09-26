@@ -7,11 +7,61 @@ import {
 } from "lucide-react";
 import CartContext from "../contexts/CartContext";
 import { SWIGGY_IMAGES_URL } from "../constants";
+import toast, { Toaster } from "react-hot-toast";
+import { CartItem, OrderItem } from "../types";
+import { useNavigate } from "react-router-dom";
+import OrdersContext from "../contexts/OrdersContext";
 
 export default function CartPage() {
   const { cartItems, clearCart, totalAmount, clearItem, addItem, removeItem } =
     useContext(CartContext)!;
 
+  const { setOrders } = useContext(OrdersContext)!;
+
+  const navigate = useNavigate();
+
+  const notify = (item: CartItem) =>
+    toast.error(`Removed ${item?.name} from cart!`, {
+      duration: 3000,
+      position: "top-center",
+    });
+
+  const handleClearItem = (item: CartItem) => {
+    clearItem(item.id);
+    notify(item);
+  };
+
+  const handlePlusClick = (item: CartItem) => {
+    addItem({
+      id: Number(item.id),
+      quantity: 1,
+      price: item.price / 100,
+      name: item?.name,
+      image: item?.image,
+      restaurant: item?.restaurant,
+    });
+  };
+
+  const handleCheckout = () => {
+    const orderItems: OrderItem[] = cartItems.map((item) => {
+      return {
+        id: item.id,
+        itemName: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity,
+        restaurantName: item.restaurant,
+        total: item.price * item.quantity,
+        orderDate: new Date().toLocaleDateString(),
+      };
+    });
+  
+    // Filter out any items with quantity 0
+    const validOrderItems = orderItems.filter(item => item.quantity > 0);
+  
+    setOrders((prev) => [...prev, ...validOrderItems]);
+    navigate("/success");
+  };
 
   return (
     <div className="container mx-auto max-w-4xl min-h-[calc(100vh-64px)] px-4 py-8">
@@ -37,7 +87,7 @@ export default function CartPage() {
                   <h3 className="font-semibold text-gray-800">{item.name}</h3>
                   <p className="text-gray-500">{item.restaurant}</p>
                   <p className="font-bold text-orange-500">
-                  ₹{Number(item.price)}
+                    ₹{Number(item.price)}
                   </p>
                 </div>
               </div>
@@ -51,13 +101,13 @@ export default function CartPage() {
                 <span className="w-8 text-center">{item.quantity}</span>
                 <button
                   className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors duration-200"
-                  onClick={() => addItem({id: Number(item.id), quantity: 1, price: item.price/100, name: item?.name, image: item?.image, restaurant: item?.restaurant})}
+                  onClick={() => handlePlusClick(item)}
                 >
                   <PlusIcon className="h-4 w-4 text-gray-600" />
                 </button>
                 <button
                   className="p-1 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-200"
-                  onClick={() => clearItem(item.id)}
+                  onClick={() => handleClearItem(item)}
                 >
                   <Trash2Icon className="h-4 w-4 text-red-500" />
                 </button>
@@ -70,8 +120,7 @@ export default function CartPage() {
       {/* Total Amount */}
       <div className="text-right mb-6">
         <p className="text-xl font-bold text-gray-800">
-          Total:{" "}
-          <span className="text-orange-500">₹{totalAmount}</span>
+          Total: <span className="text-orange-500">₹{totalAmount.toFixed(2)}</span>
         </p>
       </div>
 
@@ -83,10 +132,15 @@ export default function CartPage() {
         >
           Clear Cart
         </button>
-        <button className="w-full sm:w-auto px-4 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-200 flex items-center justify-center">
+        <button
+          disabled={cartItems.length === 0}
+          onClick={handleCheckout}
+          className="w-full sm:w-auto px-4 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-200 flex items-center justify-center cursor-pointer"
+        >
           <ShoppingCartIcon className="mr-2 h-5 w-5" /> Checkout
         </button>
       </div>
+      <Toaster />
     </div>
   );
 }

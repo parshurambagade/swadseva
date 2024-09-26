@@ -1,45 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SearchIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import Toast from '../components/Toast';
+import { Toaster } from 'react-hot-toast';
+import OrdersContext from '../contexts/OrdersContext';
 
-interface Order {
-  id: number;
-  itemName: string;
-  restaurantName: string;
-  price: number;
-  quantity: number;
-  total: number;
-  orderDate: string;
-}
-
-const initialOrders: Order[] = [
-  { id: 1, itemName: "Margherita Pizza", restaurantName: "Pizza Palace", price: 12.99, quantity: 2, total: 25.98, orderDate: "2023-06-15" },
-  { id: 2, itemName: "Chicken Burger", restaurantName: "Burger Barn", price: 8.99, quantity: 1, total: 8.99, orderDate: "2023-06-14" },
-  { id: 3, itemName: "Vegetable Stir Fry", restaurantName: "Asian Fusion", price: 10.99, quantity: 1, total: 10.99, orderDate: "2023-06-13" },
-  { id: 4, itemName: "Chocolate Cake", restaurantName: "Sweet Treats", price: 6.99, quantity: 2, total: 13.98, orderDate: "2023-06-12" },
-];
+// const initialOrders: Order[] = [
+//   { id: 1, itemName: "Margherita Pizza", restaurantName: "Pizza Palace", price: 12.99, quantity: 2, total: 25.98, orderDate: "2023-06-15" },
+//   { id: 2, itemName: "Chicken Burger", restaurantName: "Burger Barn", price: 8.99, quantity: 1, total: 8.99, orderDate: "2023-06-14" },
+//   { id: 3, itemName: "Vegetable Stir Fry", restaurantName: "Asian Fusion", price: 10.99, quantity: 1, total: 10.99, orderDate: "2023-06-13" },
+//   { id: 4, itemName: "Chocolate Cake", restaurantName: "Sweet Treats", price: 6.99, quantity: 2, total: 13.98, orderDate: "2023-06-12" },
+// ];
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<"date" | "price">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [showToast, setShowToast] = useState<boolean>(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setShowToast(true);
-    }, 1000);
-
-    return () => {
-      setShowToast(false);
-    };
-  },[])
+  const {orders, setOrders} = useContext(OrdersContext)!;
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
     setSearchTerm(term);
-    const filteredOrders = initialOrders.filter(order => 
+    const filteredOrders = orders.filter(order => 
       order.itemName.toLowerCase().includes(term.toLowerCase()) ||
       order.restaurantName.toLowerCase().includes(term.toLowerCase())
     );
@@ -117,17 +98,15 @@ export default function OrdersPage() {
             </div>
             <div className="flex flex-col items-start sm:items-end">
               <p className="text-gray-600">Quantity: {order.quantity}</p>
-              <p className="text-gray-600">Price: ${order.price.toFixed(2)}</p>
-              <p className="font-semibold text-orange-500">Total: ${order.total.toFixed(2)}</p>
+              <p className="text-gray-600">Price: ₹{order.price.toFixed(2)}</p>
+              <p className="font-semibold text-orange-500">Total: ₹{order.total.toFixed(2)}</p>
               <p className="text-sm text-gray-500">Order Date: {order.orderDate}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {showToast && (
-      <Toast message="This feature is currently under development. Displayed data is for demonstration purposes only." onClose={() => setShowToast(false)} />
-      )}
+     <Toaster />
     </div>
   );
 }

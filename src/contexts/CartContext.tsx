@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { CartContextType, CartItem } from "../types";
+import toast from "react-hot-toast";
 
 const CartContext = createContext<CartContextType | null>({
   cartItems: [],
@@ -25,7 +26,7 @@ export const CartContextProvider = ({
 
 
   const addItem = (item: CartItem) => {
-    console.log("Adding item to the cart!");
+    // console.log("Adding item to the cart!");
 
     const existingItem = cartItems.find((i) => i.id === item.id);
     if (existingItem) {
@@ -46,7 +47,7 @@ export const CartContextProvider = ({
   };
 
   const removeItem = (id: number) => {
-    console.log("Removing item from the cart!");
+    // console.log("Removing item from the cart!");
     const existingItem = cartItems.find((i) => i.id == id);
     if (existingItem) {
       if (existingItem.quantity > 1) {
@@ -79,7 +80,9 @@ export const CartContextProvider = ({
     setCartItems([]);
     setTotalItems(0);
     setTotalAmount(0);
+    toast.error(`Cart emptied!`)
   };
+
 
   return (
     <CartContext.Provider
