@@ -26,7 +26,7 @@ const Success = () => {
       ) : (
         <div className="text-center flex items-center justify-center flex-col">
           <HashLoader color="#F97316" />
-          <h1 className="font-bold text-3xl my-4">Order Successful!</h1>
+          <h1 className="font-bold text-3xl mb-4 mt-6">Order Successful!</h1>
           <p className="text-gray-600">
             Your order has been placed successfully!
           </p>

@@ -6,7 +6,7 @@ import { Info } from "../types";
 const RestaurantInfoCard: React.FC<{ resInfo: Info }> = ({ resInfo }) => {
   const { name, avgRating, locality, sla, cloudinaryImageId } = resInfo;
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
       <div className="flex flex-col md:flex-row md:items-center mb-4">
         {cloudinaryImageId && (
           <img
@@ -19,7 +19,7 @@ const RestaurantInfoCard: React.FC<{ resInfo: Info }> = ({ resInfo }) => {
           <h2 className="text-3xl font-bold mb-2 text-gray-800">{name}</h2>
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center">
-              <StarIcon className="w-5 h-5 text-orange-500 mr-1 fill-current"/>
+              <StarIcon className="w-5 h-5 text-gray-500 mr-1"/>
               <span>{avgRating} Rating</span>
             </div>
             <div className="flex items-center">

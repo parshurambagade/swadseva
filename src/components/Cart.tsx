@@ -128,7 +128,7 @@ export default function CartPage() {
       <div className="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0">
         <button
           className="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors duration-200"
-          onClick={clearCart}
+          onClick={clearCart} disabled={!cartItems.length}
         >
           Clear Cart
         </button>
