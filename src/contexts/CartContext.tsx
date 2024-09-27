@@ -24,10 +24,7 @@ export const CartContextProvider = ({
   const [totalItems, setTotalItems] = useState<number>(0);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
-
   const addItem = (item: CartItem) => {
-    // console.log("Adding item to the cart!");
-
     const existingItem = cartItems.find((i) => i.id === item.id);
     if (existingItem) {
       setCartItems(
@@ -42,12 +39,9 @@ export const CartContextProvider = ({
       setTotalItems(totalItems + item.quantity);
       setTotalAmount((prev) => prev + item.price);
     }
-
-    
   };
 
   const removeItem = (id: number) => {
-    // console.log("Removing item from the cart!");
     const existingItem = cartItems.find((i) => i.id == id);
     if (existingItem) {
       if (existingItem.quantity > 1) {
@@ -80,9 +74,8 @@ export const CartContextProvider = ({
     setCartItems([]);
     setTotalItems(0);
     setTotalAmount(0);
-    toast.error(`Cart emptied!`)
+    toast.error(`Cart emptied!`);
   };
-
 
   return (
     <CartContext.Provider

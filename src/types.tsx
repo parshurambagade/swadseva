@@ -290,6 +290,11 @@ export interface ResContextType {
   Error: string;  
   showToast: boolean;
   setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  } | null;
 }
 
 export interface OrderItem {

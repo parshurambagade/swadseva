@@ -6,7 +6,7 @@ import RestaurantCardShimmer from "../components/ShimmerUI/RestaurantCardShimmer
 import toast, { Toaster } from "react-hot-toast";
 
 export default function HomePage() {
-  const { setSortBy, filteredResList, setSearchTerm, isLoading, Error } =
+  const { title, setSortBy, filteredResList, setSearchTerm, isLoading, Error } =
     useContext(ResContext)!;
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export default function HomePage() {
           <section className="mb-12">
             {/* Top Restaurants Section */}
             <h2 className="text-3xl font-bold mb-6 text-gray-800">
-              Top Restaurants
+              {title ? title : "Top Restaurants"}
             </h2>
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-between">

@@ -9,6 +9,7 @@ import MenuContainer from "../components/MenuContainer";
 import RestaurantInfoCardShimmer from "../components/ShimmerUI/RestaurantInfoCardShimmer";
 import MenuContainerShimmer from "../components/ShimmerUI/MenuContainerShimmer";
 import toast, { Toaster } from "react-hot-toast";
+import ResContext from "../contexts/ResContext";
 
 export default function RestaurantPage() {
   const [openCategories, setOpenCategories] = useState<string[]>([]);
@@ -20,11 +21,13 @@ export default function RestaurantPage() {
   const { cartItems, addItem, removeItem, totalItems } =
     useContext(CartContext)!;
 
+  const { location } = useContext(ResContext)!;
+
   const { resId } = useParams();
 
   useEffect(() => {
     toast.dismiss();
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       if (isLoading && !resInfo.name) {
         toast.loading(
           "Data is being fetched. This may take a moment due to our CORS proxy."
@@ -34,23 +37,30 @@ export default function RestaurantPage() {
       } else {
         toast.dismiss();
       }
-    },1000)
+    }, 1000);
+
+    return () => {
+      toast.dismiss();
+      clearTimeout(timer);
+    };
   }, [isLoading, Error, resInfo]);
 
   const fetchResInfo = useCallback(async () => {
     try {
       setIsLoading(true);
       setError("");
-
+      if (!location?.latitude || !location?.longitude) {
+        return;
+      }
       const response = await axios.get(
         `${CORS_PROXY_ORIGIN}${encodeURIComponent(
-          `${SWIGGY_RESTAURANT_URL}${resId}`
+          `${SWIGGY_RESTAURANT_URL + resId}&lat=${location?.latitude}&lng=${
+            location?.longitude
+          }`
         )}`
       );
 
       const { data } = JSON.parse(response.data.contents);
-
-      // console.log(response);
 
       setResInfo(data?.cards[2]?.card?.card?.info);
 
@@ -66,11 +76,11 @@ export default function RestaurantPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [resId]);
+  }, [location, resId]);
 
   useEffect(() => {
     if (resId) fetchResInfo();
-  }, [resId, fetchResInfo]);
+  }, [resId, fetchResInfo, location]);
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) =>

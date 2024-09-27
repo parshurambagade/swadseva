@@ -17,7 +17,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <img src={"./logo.png"} alt="SwadSeva" className="h-10" />
+            <img src={"/logo.png"} alt="SwadSeva" className="h-10" />
           </div>
           <div className="hidden sm:flex items-center space-x-6 lg:space-x-9">
             <Link
