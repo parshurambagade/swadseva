@@ -1,11 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import {
-  BACKEND_API_ENDPOINT,
-  CORS_PROXY_ORIGIN,
-  SWIGGY_API_URL,
-  SWIGGY_MOBILE_API_URL,
-} from "../constants";
+import { BACKEND_API_ENDPOINT } from "../constants";
 import { ResContextType, RestaurantCardType } from "../types";
 
 const ResContext = createContext<ResContextType | null>(null);
@@ -36,14 +31,12 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         setShowToast(true);
 
         const device = window.innerWidth < 820 ? "mobile" : "desktop";
-        const API_ENDPOINT =
-          device === "mobile" ? SWIGGY_MOBILE_API_URL : SWIGGY_API_URL;
 
         if (!location.latitude || !location.longitude) {
           return;
         }
         let response = await axios.get(
-          `${BACKEND_API_ENDPOINT}lat=${location.latitude}&lng=${location.longitude}&device=${device}`
+          `${BACKEND_API_ENDPOINT}/api/restaurants/nearby?lat=${location.latitude}&lng=${location.longitude}&device=${device}`
         );
         console.log("Response: ", response);
 
@@ -59,13 +52,7 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
             longitude: 77.5775,
           });
           response = await axios.get(
-            `${CORS_PROXY_ORIGIN}${
-              API_ENDPOINT +
-              "&lat=" +
-              location.latitude +
-              "&lng=" +
-              location.longitude
-            }`
+            `${BACKEND_API_ENDPOINT}/api/restaurants/nearby?&lat=${location.latitude}&lng=${location.longitude}&device=${device}`
           );
         }
         const restaurants =

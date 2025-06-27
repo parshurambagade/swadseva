@@ -1,6 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { CORS_PROXY_ORIGIN, SWIGGY_RESTAURANT_URL } from "../constants";
+import {
+  BACKEND_API_ENDPOINT,
+} from "../constants";
 import { Link, useParams } from "react-router-dom";
 import { FoodMenu, Info } from "../types";
 import CartContext from "../contexts/CartContext";
@@ -53,9 +55,7 @@ export default function RestaurantPage() {
         return;
       }
       const response = await axios.get(
-        `${CORS_PROXY_ORIGIN}${SWIGGY_RESTAURANT_URL + resId}&lat=${
-          location?.latitude
-        }&lng=${location?.longitude}`
+        `${BACKEND_API_ENDPOINT}/api/restaurant?resId=${resId}&lat=${location?.latitude}&lng=${location?.longitude}`
       );
 
       console.log("Response in RestaurantPage: ", response);
