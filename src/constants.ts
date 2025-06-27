@@ -14,3 +14,6 @@ export const SWIGGY_RESTAURANT_URL =
   "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&restaurantId=";
 
 export const CORS_PROXY_ORIGIN = "https://thingproxy.freeboard.io/fetch/";
+
+export const BACKEND_API_ENDPOINT =
+  "https://swiggy-proxy-server-production.up.railway.app/api/swiggy?";

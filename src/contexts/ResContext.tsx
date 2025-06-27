@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import {
+  BACKEND_API_ENDPOINT,
   CORS_PROXY_ORIGIN,
   SWIGGY_API_URL,
   SWIGGY_MOBILE_API_URL,
@@ -33,20 +34,16 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         setError("");
         setIsLoading(true);
         setShowToast(true);
+
+        const device = window.innerWidth < 820 ? "mobile" : "desktop";
         const API_ENDPOINT =
-          window.innerWidth < 820 ? SWIGGY_MOBILE_API_URL : SWIGGY_API_URL;
+          device === "mobile" ? SWIGGY_MOBILE_API_URL : SWIGGY_API_URL;
 
         if (!location.latitude || !location.longitude) {
           return;
         }
         let response = await axios.get(
-          `${CORS_PROXY_ORIGIN}${
-            API_ENDPOINT +
-            "&lat=" +
-            location.latitude +
-            "&lng=" +
-            location.longitude
-          }`
+          `${BACKEND_API_ENDPOINT}lat=${location.latitude}&lng=${location.longitude}&device=${device}`
         );
         console.log("Response: ", response);
 
