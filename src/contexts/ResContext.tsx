@@ -1,12 +1,17 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { CORS_PROXY_ORIGIN, SWIGGY_API_URL } from "../constants";
+import {
+  CORS_PROXY_ORIGIN,
+  SWIGGY_API_URL,
+  SWIGGY_MOBILE_API_URL,
+} from "../constants";
 import { ResContextType, RestaurantCardType } from "../types";
 
 const ResContext = createContext<ResContextType | null>(null);
 
 const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [resList, setResList] = useState<RestaurantCardType[]>([]);
+  const [swiggyNotPresent, setSwiggyNotPresent] = useState<boolean>(false);
   const [filteredResList, setFilteredResList] = useState<RestaurantCardType[]>(
     []
   );
@@ -22,30 +27,64 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
     longitude: number;
   } | null>(null);
 
-  const fetchRestaurants = useCallback(async (location: {latitude: number, longitude: number}) => {
-    try {
-      setError("");
-      setIsLoading(true);
-      setShowToast(true);
+  const fetchRestaurants = useCallback(
+    async (location: { latitude: number; longitude: number }) => {
+      try {
+        setError("");
+        setIsLoading(true);
+        setShowToast(true);
+        const API_ENDPOINT =
+          window.innerWidth < 820 ? SWIGGY_MOBILE_API_URL : SWIGGY_API_URL;
 
-      if(!location.latitude || !location.longitude){
-       return;
+        if (!location.latitude || !location.longitude) {
+          return;
+        }
+        let response = await axios.get(
+          `${CORS_PROXY_ORIGIN}${
+            API_ENDPOINT +
+            "&lat=" +
+            location.latitude +
+            "&lng=" +
+            location.longitude
+          }`
+        );
+        console.log("Response: ", response);
+
+        if (
+          response?.data?.data?.communication?.swiggyNotPresent
+            ?.swiggyNotPresent === true
+        ) {
+          setSwiggyNotPresent(true);
+
+          // If Swiggy is not present, fetch restaurants from Bangalore
+          setLocation({
+            latitude: 12.9629,
+            longitude: 77.5775,
+          });
+          response = await axios.get(
+            `${CORS_PROXY_ORIGIN}${
+              API_ENDPOINT +
+              "&lat=" +
+              location.latitude +
+              "&lng=" +
+              location.longitude
+            }`
+          );
+        }
+        const restaurants =
+          response?.data?.data?.cards[1]?.card?.card?.gridElements
+            ?.infoWithStyle?.restaurants;
+        setResList(restaurants);
+        setTitle(response?.data?.data?.cards[1]?.card?.card?.header?.title);
+      } catch (err: unknown) {
+        console.error((err as Error)?.message);
+        setError("Error While Fetching Data. Please Try Again Later");
+      } finally {
+        setIsLoading(false);
       }
-      
-      const response = await axios.get(`${CORS_PROXY_ORIGIN}${encodeURIComponent(SWIGGY_API_URL + "&lat=" + location.latitude + "&lng=" + location.longitude)}`);
-      const parsedData = JSON.parse(response?.data?.contents);
-      const restaurants =
-        parsedData?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants;
-      setResList(restaurants);
-      setTitle(parsedData?.data?.cards[1]?.card?.card?.header?.title);
-    } catch (err) {
-      console.error(err);
-      setError("Error While Fetching Data. Please Try Again Later");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -61,18 +100,18 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
           setLocation({
             latitude: 18.5204,
             longitude: 73.8567,
-          })
+          });
           console.error(error?.message);
         }
       );
-    }else{
+    } else {
       setError("Geolocation is not supported by this browser.");
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
 
   useEffect(() => {
-    if(location){
+    if (location) {
       fetchRestaurants(location);
     }
   }, [fetchRestaurants, location]);
@@ -115,7 +154,8 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         showToast,
         setShowToast,
         title,
-        location
+        location,
+        swiggyNotPresent,
       }}
     >
       {children}

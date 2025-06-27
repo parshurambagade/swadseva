@@ -1,26 +1,39 @@
-import { useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 import { SearchIcon } from "lucide-react";
-import RestaurantCard, { VegRestaurantCard } from "../components/RestaurantCard";
+import RestaurantCard, {
+  VegRestaurantCard,
+} from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";
 import RestaurantCardShimmer from "../components/ShimmerUI/RestaurantCardShimmer";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function HomePage() {
-  const { title, setSortBy, filteredResList, setSearchTerm, isLoading, Error } =
-    useContext(ResContext)!;
+  const {
+    swiggyNotPresent,
+    title,
+    setSortBy,
+    filteredResList,
+    setSearchTerm,
+    isLoading,
+    Error,
+  } = useContext(ResContext)!;
 
-    useEffect(() => {
+  useEffect(() => {
+    toast.dismiss();
+    if (isLoading) {
+      toast.loading(
+        "Data is being fetched. This may take a moment due to our CORS proxy."
+      );
+    } else if (Error) {
+      toast.error(Error);
+    } else if (swiggyNotPresent) {
+      toast.error(
+        "Since Swiggy is not available in your area. We are showing restaurants from Bangalore."
+      );
+    } else {
       toast.dismiss();
-      if(isLoading){
-        toast.loading("Data is being fetched. This may take a moment due to our CORS proxy."); 
-      }else if(Error){
-        toast.error(Error);
-      }else{
-        
-        toast.dismiss();}
-      }
-    ,[isLoading, Error])
-
+    }
+  }, [isLoading, Error, swiggyNotPresent]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -56,19 +69,24 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredResList?.map((restaurant) => (
-                  restaurant.info.veg ? 
-                  <VegRestaurantCard
-                    restaurant={restaurant}
-                    key={restaurant?.info?.id}
-                  /> : <RestaurantCard restaurant={restaurant} key={restaurant?.info?.id} />
-                ))}
+                {filteredResList?.map((restaurant) =>
+                  restaurant.info.veg ? (
+                    <VegRestaurantCard
+                      restaurant={restaurant}
+                      key={restaurant?.info?.id}
+                    />
+                  ) : (
+                    <RestaurantCard
+                      restaurant={restaurant}
+                      key={restaurant?.info?.id}
+                    />
+                  )
+                )}
               </div>
             )}
           </section>
         )}
       </main>
-
 
       <Toaster />
     </div>

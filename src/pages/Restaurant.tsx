@@ -53,19 +53,17 @@ export default function RestaurantPage() {
         return;
       }
       const response = await axios.get(
-        `${CORS_PROXY_ORIGIN}${encodeURIComponent(
-          `${SWIGGY_RESTAURANT_URL + resId}&lat=${location?.latitude}&lng=${
-            location?.longitude
-          }`
-        )}`
+        `${CORS_PROXY_ORIGIN}${SWIGGY_RESTAURANT_URL + resId}&lat=${
+          location?.latitude
+        }&lng=${location?.longitude}`
       );
 
-      const { data } = JSON.parse(response.data.contents);
+      console.log("Response in RestaurantPage: ", response);
 
-      setResInfo(data?.cards[2]?.card?.card?.info);
+      setResInfo(response?.data?.data?.cards[2]?.card?.card?.info);
 
       setMenuItems(
-        data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+        response?.data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
           (res: FoodMenu) =>
             res?.card?.card?.title && res?.card?.card?.itemCards?.length > 0
         )
