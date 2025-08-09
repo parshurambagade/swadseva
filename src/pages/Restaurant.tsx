@@ -1,8 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import {
-  BACKEND_API_ENDPOINT,
-} from "../constants";
+import { BACKEND_API_ENDPOINT } from "../constants";
 import { Link, useParams } from "react-router-dom";
 import { FoodMenu, Info } from "../types";
 import CartContext from "../contexts/CartContext";
@@ -57,8 +55,6 @@ export default function RestaurantPage() {
       const response = await axios.get(
         `${BACKEND_API_ENDPOINT}/api/restaurant?resId=${resId}&lat=${location?.latitude}&lng=${location?.longitude}`
       );
-
-      console.log("Response in RestaurantPage: ", response);
 
       setResInfo(response?.data?.data?.cards[2]?.card?.card?.info);
 

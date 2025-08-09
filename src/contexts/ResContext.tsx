@@ -38,7 +38,6 @@ const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
         let response = await axios.get(
           `${BACKEND_API_ENDPOINT}/api/restaurants/nearby?lat=${location.latitude}&lng=${location.longitude}&device=${device}`
         );
-        console.log("Response: ", response);
 
         if (
           response?.data?.data?.communication?.swiggyNotPresent
