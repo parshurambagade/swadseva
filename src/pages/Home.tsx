@@ -5,7 +5,7 @@ import RestaurantCard, {
 } from "../components/RestaurantCard";
 import ResContext from "../contexts/ResContext";
 import RestaurantCardShimmer from "../components/ShimmerUI/RestaurantCardShimmer";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const {
@@ -48,7 +48,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="grow container mx-auto px-4 py-8">
         {/* Search and Sort Section */}
         <HomeHeader handleSearch={handleSearch} handleSort={handleSort} />
 
@@ -87,8 +87,6 @@ export default function HomePage() {
           </section>
         )}
       </main>
-
-      <Toaster />
     </div>
   );
 }

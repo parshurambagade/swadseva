@@ -1,11 +1,11 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_API_ENDPOINT } from "../constants";
 import { ResContextType, RestaurantCardType } from "../types";
 
 const ResContext = createContext<ResContextType | null>(null);
 
-const ResContextProvider = ({ children }: { children: React.ReactNode }) => {
+const ResContextProvider = ({ children }: { children: ReactNode }) => {
   const [resList, setResList] = useState<RestaurantCardType[]>([]);
   const [swiggyNotPresent, setSwiggyNotPresent] = useState<boolean>(false);
   const [filteredResList, setFilteredResList] = useState<RestaurantCardType[]>(

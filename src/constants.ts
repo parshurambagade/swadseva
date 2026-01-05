@@ -1,6 +1,3 @@
-export const SWIGGY_IMAGES_URL =
-  "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/";
+export const SWIGGY_IMAGES_URL = import.meta.env.VITE_SWIGGY_IMAGES_URL;
 
-export const BACKEND_API_ENDPOINT = "https://devsaathi.tech/proxy";
-
-// export const BACKEND_API_ENDPOINT = "http://localhost:3001";
+export const BACKEND_API_ENDPOINT = import.meta.env.VITE_BACKEND_API_ENDPOINT;

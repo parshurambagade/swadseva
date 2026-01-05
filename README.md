@@ -26,7 +26,7 @@ Check out the live version here: [SwadSeva](https://swadseva.vercel.app)
 
 - **Frontend**: React, TypeScript, Tailwind CSS, Context API
 - **API**: Swiggy's Live API
-- **UI Enhancements**: Shimmer UI, react-hot-toast for notifications
+- **UI Enhancements**: Shimmer UI
 - **Hosting**: Deployed on Vercel
 
 ## 🛠️ Installation

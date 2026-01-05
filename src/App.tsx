@@ -13,6 +13,7 @@ import { CartContextProvider } from "./contexts/CartContext";
 import Success from "./pages/Success";
 import ProtectedSuccessRoutes from "./components/ProtectedSuccessRoutes";
 import { OrdersContextProvider } from "./contexts/OrdersContext";
+import { Toaster } from "./components/ui/sonner";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -83,6 +84,7 @@ const App = () => {
       <OrdersContextProvider>
         <CartContextProvider>
           <RouterProvider router={router} />
+          <Toaster position="top-center" richColors  theme="light"/>
         </CartContextProvider>
       </OrdersContextProvider>
     </ResContextProvider>

@@ -2,8 +2,8 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useContext } from "react";
 import { SWIGGY_IMAGES_URL } from "../constants";
 import { CartItem, Info, ItemCard } from "../types";
-import toast, { Toaster } from "react-hot-toast";
 import CartContext from "../contexts/CartContext";
+import { toast } from "sonner";
 
 
 const MenuItem: React.FC<{
@@ -120,7 +120,6 @@ const MenuItem: React.FC<{
           </div>
         </div>
       </div>
-      <Toaster />
     </div>
   );  
 };

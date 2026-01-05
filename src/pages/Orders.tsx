@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { SearchIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { Toaster } from "react-hot-toast";
 import OrdersContext from "../contexts/OrdersContext";
 
 // const initialOrders: Order[] = [
@@ -121,8 +120,6 @@ export default function OrdersPage() {
           ))}
         </div>
       )}
-
-      <Toaster />
     </div>
   );
 }

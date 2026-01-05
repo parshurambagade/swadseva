@@ -7,10 +7,10 @@ import {
 } from "lucide-react";
 import CartContext from "../contexts/CartContext";
 import { SWIGGY_IMAGES_URL } from "../constants";
-import toast, { Toaster } from "react-hot-toast";
 import { CartItem, OrderItem } from "../types";
 import { useNavigate } from "react-router-dom";
 import OrdersContext from "../contexts/OrdersContext";
+import { toast } from "sonner";
 
 export default function CartPage() {
   const { cartItems, clearCart, totalAmount, clearItem, addItem, removeItem } =
@@ -140,7 +140,6 @@ export default function CartPage() {
           <ShoppingCartIcon className="mr-2 h-5 w-5" /> Checkout
         </button>
       </div>
-      <Toaster />
     </div>
   );
 }

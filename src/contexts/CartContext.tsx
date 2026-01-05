@@ -1,6 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import { CartContextType, CartItem } from "../types";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const CartContext = createContext<CartContextType | null>({
   cartItems: [],
@@ -18,7 +18,7 @@ const CartContext = createContext<CartContextType | null>({
 export const CartContextProvider = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);

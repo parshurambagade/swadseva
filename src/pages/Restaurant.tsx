@@ -8,8 +8,8 @@ import RestaurantInfoCard from "../components/RestaurantInfoCard";
 import MenuContainer from "../components/MenuContainer";
 import RestaurantInfoCardShimmer from "../components/ShimmerUI/RestaurantInfoCardShimmer";
 import MenuContainerShimmer from "../components/ShimmerUI/MenuContainerShimmer";
-import toast, { Toaster } from "react-hot-toast";
 import ResContext from "../contexts/ResContext";
+import { toast } from "sonner";
 
 export default function RestaurantPage() {
   const [openCategories, setOpenCategories] = useState<string[]>([]);
@@ -147,7 +147,6 @@ export default function RestaurantPage() {
           </svg>
         </Link>
       </div>
-      {!Object.values(resInfo).length && <Toaster />}
     </div>
   );
 }

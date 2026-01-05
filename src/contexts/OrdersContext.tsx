@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, ReactNode } from "react";
 import { OrderItem, OrdersContextType } from "../types";
 
 const OrdersContext = createContext<OrdersContextType | null>(null);
@@ -6,7 +6,7 @@ const OrdersContext = createContext<OrdersContextType | null>(null);
 export const OrdersContextProvider = ({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) => {
   const [orders, setOrders] = useState<OrderItem[]>([]);
   return (
